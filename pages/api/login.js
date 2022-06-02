@@ -6,7 +6,7 @@ export default async function assetHandler(req, res) {
   switch (method) {
     case 'GET':
       try {
-        const posts = await prisma.user.findFirst({
+        const posts = await prisma.User.findFirst({
           where: {
             username: 'mark',
             password: '123',
