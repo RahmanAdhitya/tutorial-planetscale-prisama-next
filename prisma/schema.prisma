@@ -4,7 +4,6 @@
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
-  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
   referentialIntegrity = "prisma"
 }
 
@@ -14,9 +13,45 @@ generator client {
 }
 
 model Post {
-  id        Int      @default(autoincrement()) @id
+  id         Int       @id @default(autoincrement())
+  caption    String?   @db.VarChar(255)
+  createdAt  DateTime  @default(now())
+  image_url  String?
+  like_count Int       @default(0)
+  userId     Int
+  User       User      @relation(fields: [userId], references: [id],onUpdate: Cascade, onDelete: Cascade)
+  comments   Comment[]
+  likes      Like[]
+}
+
+model User {
+  id          Int       @id @default(autoincrement())
+  full_name   String?   @db.VarChar(255)
+  username    String    @unique @db.VarChar(255)
+  email       String    @unique @db.VarChar(255)
+  password    String    @db.VarChar(255)
+  bio         String?
+  picture_url String?
+  posts       Post[]
+  comments    Comment[]
+  likes       Like[]
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  title     String   @db.VarChar(255)
-  content   String
+  postId    Int
+  Post      Post     @relation(fields: [postId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  userId    Int
+  User      User     @relation(fields: [userId], references: [id],onUpdate: Cascade, onDelete: Cascade)
+  content   String?
+}
+
+model Like {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  postId    Int
+  Post      Post     @relation(fields: [postId], references: [id], onUpdate: Cascade, onDelete: Cascade)
+  userId    Int
+  User      User     @relation(fields: [userId], references: [id], onUpdate: Cascade, onDelete: Cascade)
 }
