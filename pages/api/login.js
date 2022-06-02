@@ -1,4 +1,3 @@
-import { markAssetError } from 'next/dist/client/route-loader';
 import prisma from '../../lib/prisma';
 
 export default async function assetHandler(req, res) {
